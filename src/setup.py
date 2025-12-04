@@ -14,7 +14,7 @@ def package_files(directory):
 
 setup(
    name='uu_delphi_python_dec25',
-   version='0.2',
+   version='0.3',
    description='Python package to help with DELPHI Cecember 2025 Python workshop.',
    author='Alec Chapman',
    author_email='abchapman93@gmail.com',
