@@ -266,3 +266,234 @@ quiz_check_len_dict = MultipleChoiceQuiz(
         ), 
     options=["0", "3", "6", "An error would be raised."], answer="3", shuffle_answer=False)
 
+
+def validate_execute_commute(func):
+    correct = True
+    mappings = {"green": "Go!", "yellow": "Slow down.", "red": "Stop!"}
+    for raining in (True, False):
+        for color in ("green", "yellow", "red"):
+            if raining is False:
+                expected = (False, "walk")
+            else:
+                expected = (True, mappings[color])
+            import io
+            from contextlib import redirect_stdout
+
+            f = io.StringIO()
+            with redirect_stdout(f):
+                actual = func(raining, color)
+
+            if actual != expected:
+                correct = False
+                print(
+                    f"Incorrect. When raining = {raining} and color = '{color}', expected {expected} but got {actual}")
+    if correct:
+        print("Correct!")
+
+
+
+
+
+test_execute_commute = FunctionTest(validation_func=validate_execute_commute)
+
+quiz_execute_commute_drive = MultipleChoiceQuiz(description="", answer="True; True; False", options=[
+    "True; True; False",
+    "True; False; True.",
+    "False; True; True",
+    "False; False; True"
+])
+
+hint_print_name = QuizHint(hints=[widgets.HTML("""If I ran this function without providing an argument for middle, it would print out 'My name is Alec Danger Chapman.'</br>
+If I gave it my middle initial of 'B.', it would print out 'My name is Alec B. Chapman'""")])
+
+hint_print_my_list = QuizHint(hints=[widgets.HTML("""The output should look like:</br><img src="https://raw.githubusercontent.com/abchapman93/delphi-python-2025/refs/heads/main/media/output_for_loop.png" width="50%" height="50%"></img>""")])
+
+quiz_raining_false = MultipleChoiceQuiz(answer="'You should walk to work.'", options=[
+    "'You should walk to work.'",
+    "'You should drive to work.'",
+    "Nothing will happen.",
+    "An error will be raised."
+])
+
+def validate_decide_to_drive2(func):
+    for a in (True, False):
+        for b in (True, False):
+            print(f"raining = {a}, hot = {b}")
+            if a or b:
+                expected = True
+            else:
+                expected = False
+            actual = func(a, b)
+            if actual != expected:
+                print("That is incorrect.")
+            else:
+                print("That is correct!")
+                print()
+test_decide_to_drive2 = FunctionTest(validation_func=validate_decide_to_drive2)
+
+def test_decide_to_bring_umbrella_validation_func(func):
+    import inspect
+    arg_spec = inspect.getfullargspec(func)
+    if len(arg_spec.args) > 1:
+        print(f"decide_to_drive should take one argument named 'raining'. Got {arg_spec.args}")
+    import contextlib
+    with contextlib.redirect_stdout(None):
+        for val_in in (True, False):
+
+            val_out = func(raining=val_in)
+    try:
+        assert val_in is val_out
+    except AssertionError:
+        print(f"Incorrect. When raining = {val_in}, return value should be {val_in}, not {val_out}")
+        return False
+    print("That is correct!")
+    return True
+test_decide_to_bring_umbrella = ValueTest(validation_func=test_decide_to_bring_umbrella_validation_func)
+
+
+
+hint_square_root = QuizHint(hints=[
+    widgets.HTML("sqrt(x) is the same as raising x to the 1/2"),
+    widgets.HTML("To raise a value to a power in Python, use two asterisks. For example: x squared = x**2")
+])
+
+test_my_mean = FunctionTest(args=([4, 0, 2, 2, 0, 10, 7, 8, 5, 0],), expected=3.8)
+
+
+def test_sd_validation_func(sd_submitted):
+    import math
+    a = [4, 0, 2, 2, 0, 10, 7, 8, 5, 0]
+
+    expected = np.std(a)
+    actual = sd_submitted(a)
+    if not math.isclose(actual, expected):
+        print(f"Incorrect. Expected {expected:.4f}, got {actual:.4f}")
+    print("Correct!")
+
+
+import numpy as np
+
+test_my_sd = FunctionTest(validation_func=test_sd_validation_func)
+
+quiz_traffic_light_red = MultipleChoiceQuiz(answer="An error will be raised.", options=[
+    "'Go!'",
+    "'Slow down.'", 
+    "'Stop!'",
+    "Nothing will happen.",
+    "An error will be raised."
+], shuffle_answer=False)
+
+
+quiz_data_type_test_pt_roster = MultipleChoiceQuiz(description="What data type is `test_pt_roster`?", answer="dict",
+                   options=["dict", "list", "set", "int"])
+
+quiz_data_type_pt_roster_rachel = MultipleChoiceQuiz(description='What data type is `test_pt_roster["Rachel"]`?', answer="dict",
+                   options=["dict", "list", "set", "int"])
+
+quiz_data_type_severity = MultipleChoiceQuiz(description='What data type is `test_pt_roster["Rachel"]["severity"]`?', answer="int",
+                   options=["dict", "list", "set", "int"])
+
+test_rachel_age = FreeTextTest("What code would give you Rachel's age?", answer='pt_roster["Rachel"]["age"]')
+
+test_laura_time = FreeTextTest("What code would give you Laura's arrival time?", answer='pt_roster["Laura"]["arrival_time"]')
+
+
+
+hint_sort_severity = QuizHint(
+    hints=[
+        widgets.HTML("""One option is to use a for-loop and keep track of the highest/lowest scores you've seen and the corresponding names."""),
+        widgets.HTML("""Here is the beginning of a block of code which uses the for-loop approach:
+        <img src="https://raw.githubusercontent.com/abchapman93/delphi-python-2025/refs/heads/main/media/hint_sort_severity_loop.png" width="75%"></img>"""),
+        widgets.HTML("""<strong>(Advanced)</strong> Another approach is to use the sorted() function with a custom key and a <em>lambda function</em>. 
+        See <a target="_blank" href="https://www.geeksforgeeks.org/ways-sort-list-dictionaries-values-python-using-lambda-function/?ref=lbp">this article</a> for more information.""")
+    ]
+)
+
+def _discretize_bmi(bmi):
+    if bmi < 18.5:
+        return "< 18.5"
+    if bmi <= 24.9:
+        return "18.5-24.9"
+    if bmi <= 29.9:
+        return "25.0-29.9"
+    if bmi <= 39.9:
+        return "30-39.9"
+    return ">=40"
+
+
+def _discretize_bmi(bmi):
+    if bmi < 18.5:
+        return "< 18.5"
+    if bmi <= 24.9:
+        return "18.5-24.9"
+    if bmi <= 29.9:
+        return "25.0-29.9"
+    if bmi <= 39.9:
+        return "30-39.9"
+    return ">=40"
+
+
+def test_discretize_bmi_validation_func(func):
+    for val in range(0, 50, 5):
+        actual = func(val)
+        expected = _discretize_bmi(val)
+        try:
+            assert actual == expected
+        except AssertionError:
+            print(f"Incorrect. When bmi = {_discretize_bmi(val)}, got {func(val)} expected")
+            return
+    print("That is correct!")
+
+
+test_discretize_bmi = FunctionTest(validation_func=test_discretize_bmi_validation_func)
+
+
+
+test_dx_subject_counts = ValueTest(expected={'pneumonia': 318, 'sepsis': 911, 'respiratory': 1145})
+
+test_pna_sepsis = FreeTextTest("How many patients have <strong>both</strong> pneumonia <strong>and</strong> sepsis?",
+                              answer=137)
+
+test_pna_sepsis_resp = FreeTextTest("How many patients have <strong>all 3 of</strong> pneumonia, sepsis, and respiratory disease?",
+                              answer=110)
+
+test_pna_or_sepsis_or_resp = FreeTextTest("How many patients have <strong>any of</strong> pneumonia, sepsis, and respiratory disease?",
+                              answer=1671)
+
+test_pna_only = FreeTextTest("How many patients have <strong>only</strong> pneumonia?",
+                              answer=75)
+
+test_dx_subject_probs = ValueTest(expected={'pneumonia': 0.19030520646319568,
+ 'sepsis': 0.5451825254338719,
+ 'respiratory': 0.6852184320766008}, show_answer=True)
+
+hint_comorbidities = QuizHint(hints=[
+    widgets.HTML("""Refer back to the set methods we learned earlier. Imagine this problem as a venn diagram. Which parts of the venn diagram are these questions describing?""")
+])
+
+hint_prob_icd = QuizHint(hints=[
+   widgets.HTML("The probability of a patient having a disease can be calculated as the count of patients with the disease divided by the total number of patients (defined here as any of the patients in this dataset)."),
+    widgets.HTML("We calculated the total number of patients in 3.3")
+])
+
+
+
+def load_dx_subject_sets():
+    from urllib.request import urlopen
+    fp = "https://raw.githubusercontent.com/abchapman93/delphi-python-2025/refs/heads/main/data/dx_subject_sets.csv"
+    icd9_subject_sets = {
+        "pneumonia": set(),
+        "sepsis": set(),
+        "respiratory": set()
+    }
+    # load CSV from remote URL
+    with urlopen(fp) as resp:
+        remote_lines = resp.read().decode('utf-8').splitlines()
+
+    # rebuild sets from remote content (overwrite any earlier work in this function)
+    icd9_subject_sets = {"pneumonia": set(), "sepsis": set(), "respiratory": set()}
+    for line in remote_lines[1:]:
+        subject, dx = line.split(",")
+        icd9_subject_sets[dx].add(int(subject))
+
+    return icd9_subject_sets
